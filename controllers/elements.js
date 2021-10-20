@@ -3,6 +3,10 @@ const db = require("../models/index");
 /* const { param } = require("../routes/routes"); */
 
 const element = db.element;
+const period = db.period;
+const group = db.group;
+const clasificacion = db.clasification;
+const user = db.user;
 
 exports.createElement = async (req, res) => {
     try {
@@ -16,13 +20,58 @@ exports.createElement = async (req, res) => {
             return res.status(404).send({ message:'symbol is required' })
         if(!body.atomicMass) 
             return res.status(404).send({ message:'atomicMass is required' });
+        if(!body.periodId)
+            return res.status(404).send({ message: 'periodId is required' });
+        if(!body.groupId)
+            return res.status(404).send({ message: 'groupId is required' });
+        if(!body.clasificationId)
+            return res.status(404).send({ message: 'clasificationId is required' });
+        if(!body.userId)
+            return res.status(404).send({ message: 'userId is required' });
 
 
+        //Period
+        const findPeriod = await period.findOne({
+            where: { id: body.periodId, statusDelete: false },
+        });
+
+        if (!findPeriod)
+            return res.status(404).send({ message:'Periodo no encontrado' });
+
+        //Group
+        const findGroup = await group.findOne({
+            where: { id: body.groupId, statusDelete: false },
+        });
+
+        if (!findGroup)
+            return res.status(404).send({ message:'Grupo no encontrado' });
+
+        //Clasification
+        const findClasification = await clasificacion.findOne({
+            where: { id: body.clasificationId, statusDelete: false },
+        });
+
+        if (!findClasification)
+            return res.status(404).send({ message:'Clasificacion no encontrada' });
+
+        //User
+        const findUser = await user.findOne({
+            where: { id: body.userId, statusDelete: false },
+        });
+
+        if (!findUser)
+            return res.status(404).send({ message:'Usuario no se encontro' });
+
+        //creacion elemento
         const create = await element.create({
             name: body.name,
             atomicNumber: body.atomicNumber,
             symbol: body.symbol,
-            atomicMass: body.atomicMass,           
+            atomicMass: body.atomicMass,
+            periodId: body.periodId, 
+            groupId: body.groupId,
+            clasificationId: body.clasificationId,
+            userId: body.userId,          
 
         });
         

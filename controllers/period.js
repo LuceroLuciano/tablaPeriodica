@@ -13,10 +13,9 @@ exports.createPeriod = async (req, res) => {
             return res.status(404).send({ message:'numPeriod is required' });
 
         const create = await period.create({
-            numPeriod: body.numPeriod,
+            numPeriod: body.numPeriod,            
         });
-
-        return res.status(201).send({ message:'El periodo se creo correctamente' });
+        return res.status(201).send({ message:'periodo creado correctamente' });
 
         
     } catch (error) {
@@ -28,7 +27,7 @@ exports.getPeriod = async (req, res) => {
     try {
         //hacer una busqueda
         
-        const find = await user.findAll({
+        const find = await period.findAll({            
             where: { statusDelete: false },
         });
         
@@ -48,23 +47,24 @@ exports.updatePeriod = async (req, res) => {
         if (!body.numPeriod)
             return res.status(404).send({ message: "numPeriod es requerido" });
 
-        const validate = await element.findOne({
+        const validate = await period.findOne({
             where:{ id: params.id },
         });
 
-        if(!validate)
-            return res.status(404).send({ message:"No se encontro periodo" });
-        if(validate.statusDelete === true)
-            return res.status(404).send({ message:"No se encontro elemento" });
+            if(!validate)
+                return res.status(404).send({ message:"No se encontro periodo" });
+            if(validate.statusDelete === true)
+                return res.status(404).send({ message:"No se encontro elemento" });
 
         validate.numPeriod = body.numPeriod;
+        validate.save();
 
         return res
             .status(200)
             .send({ message: "Periodo actualizado correctamente" });
 
     } catch (error) {
-       return res.status(500).send(message.error);
+        return res.status(500).send(message.error);
     }
 };
 
@@ -82,7 +82,7 @@ exports.deletePeriod = async (req, res) => {
         find.statusDelete = true;
         find.save();
             
-        return res.status(200).send({message:'elemento eliminado periodo'});
+        return res.status(200).send({message:'periodo eliminado correctamente'});
             
     } catch (error) {
         return res.status(500).send(message.error);
