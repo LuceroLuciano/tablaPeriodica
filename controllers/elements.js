@@ -1,17 +1,22 @@
 //un controlador es un edpoint y se hace un edpoin para cada metodo
+//const clasification = require("../models/clasification");
 const db = require("../models/index");
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 /* const { param } = require("../routes/routes"); */
 
 const element = db.element;
 const period = db.period;
-const group = db.group;
-const clasificacion = db.clasification;
-const user = db.user;
+const group = db.group; 
+const clasification = db.clasification;
+const user = db.user; 
 
 exports.createElement = async (req, res) => {
     try {
         const { body } = req;      
-        
+
+        console.log('Estamos entrando');
+
         if(!body.name) 
             return res.status(404).send({ message:'name is required' });
         if(!body.atomicNumber) 
@@ -23,11 +28,11 @@ exports.createElement = async (req, res) => {
         if(!body.periodId)
             return res.status(404).send({ message: 'periodId is required' });
         if(!body.groupId)
-            return res.status(404).send({ message: 'groupId is required' });
+            return res.status(404).send({ message: 'groupId is required' }); 
         if(!body.clasificationId)
             return res.status(404).send({ message: 'clasificationId is required' });
         if(!body.userId)
-            return res.status(404).send({ message: 'userId is required' });
+            return res.status(404).send({ message: 'userId is required' }); 
 
 
         //Period
@@ -44,10 +49,10 @@ exports.createElement = async (req, res) => {
         });
 
         if (!findGroup)
-            return res.status(404).send({ message:'Grupo no encontrado' });
+            return res.status(404).send({ message:'Grupo no encontrado' }); 
 
         //Clasification
-        const findClasification = await clasificacion.findOne({
+        const findClasification = await clasification.findOne({
             where: { id: body.clasificationId, statusDelete: false },
         });
 
@@ -71,7 +76,7 @@ exports.createElement = async (req, res) => {
             periodId: body.periodId, 
             groupId: body.groupId,
             clasificationId: body.clasificationId,
-            userId: body.userId,          
+            userId: body.userId,           
 
         });
         
@@ -84,6 +89,60 @@ exports.createElement = async (req, res) => {
 
 exports.getElement = async (req, res) => {
     try {
+        //query de asociacion con period
+        const { periodName } = req.query;
+        if (periodName) {
+            const find = await element.findAll({
+                where: { statusDelete: false },
+                include: {
+                    model: period,
+                    where: {state:{[Op.iRegexp]: periodName}},
+                },
+            });
+            return res.status(200).send(find);
+        } 
+ 
+        //query de asociacion con group
+        const { groupName } = req.query;
+        if (groupName) {
+            const find = await element.findAll({
+                where: { statusDelete: false },
+                include: {
+                    model: group,
+                    where: {state: { [Op.iRegexp]: groupName}},
+                },
+            });
+            return res.status(200).send(find);
+        } 
+ 
+        //query de asociacion con clasification
+        const { clasificationName } = req.query;                        
+        if (clasificationName) {
+            const find = await element.findAll({
+                where: { statusDelete: false },
+                include: {
+                    model: clasification,
+                    where: {state:{[Op.iRegexp]: clasificationName}},
+                },
+            });
+
+            return res.status(200).send(find);
+        }
+
+        //query de asociacion con user
+       const { userName } = req.query;
+        if (userName) {
+            const find = await element.findAll({
+                where: { statusDelete: false },
+                include: {
+                    model: user,
+                    where: {state: {[Op.iRegexp]: userName}},
+                },
+            });
+
+            return res.status(200).send(find);
+        }  
+
         //hacer una busqueda
         const find = await element.findAll({
             where: { statusDelete: false },
@@ -110,6 +169,14 @@ exports.updateElement = async (req, res) => {
             return res.status(404).send({ message: "symbol is required" });
         if (!body.atomicMass)
             return res.status(404).send({ message: "atomicMass is required" });
+        if (!body.period)
+            return res.status(404).send({ message: "period is required" });
+        if (!body.group)
+            return res.status(404).send({ message: "group is required" }); 
+        if (!body.clasification)
+            return res.status(404).send({ message: "clasification is required" });
+        if (!body.user)
+            return res.status(404).send({ message: "clasification is required" }); 
         
         const validate = await element.findOne({
             where:{ id: params.id },
@@ -124,6 +191,10 @@ exports.updateElement = async (req, res) => {
         validate.atomicNumber = body.atomicNumber;
         validate.symbol = body.symbol;
         validate.atomicMass = body.atomicMass;
+        validate.period = body.period;
+        validate.group = body.group;
+        validate.clasification = body.clasification;
+        validate.user = body.user;
         validate.save();
 
         return res

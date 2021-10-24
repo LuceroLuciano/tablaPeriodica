@@ -25,7 +25,7 @@ db.element.belongsTo(db.period);
 
 //asociacion element-group
 db.group.hasMany(db.element);
-db.element.belongsTo(db.group);
+db.element.belongsTo(db.group); 
 
 //asociacion element-clasification
 db.clasification.hasMany(db.element);
