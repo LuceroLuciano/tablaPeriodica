@@ -1,6 +1,7 @@
 const db = require('../models/index')
 
 const user = db.user; 
+const element = db.element;
 
 exports.createUser = async (req, res) => {
     try {
@@ -40,6 +41,9 @@ exports.getUser = async (req, res) => {
         
         const find = await user.findAll({
             where: { statusDelete: false },
+            include: {
+                model: element,
+            },
         });
         
         return res.status(200).send(find);

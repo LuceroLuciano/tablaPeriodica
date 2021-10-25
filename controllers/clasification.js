@@ -2,6 +2,7 @@
 const db = require("../models/index");
 
 const clasification = db.clasification;
+const element = db.element;
 
 exports.createClasification = async (req, res) => {
     try {
@@ -29,6 +30,9 @@ exports.getClasification = async (req, res) => {
         
         const find = await clasification.findAll({            
             where: { statusDelete: false },
+            include:{
+                model: element,
+            },
         });
         
         return res.status(200).send(find);

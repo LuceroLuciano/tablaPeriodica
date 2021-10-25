@@ -2,6 +2,7 @@
 const db = require("../models/index");
 
 const group = db.group;
+const element = db.element;
 
 exports.createGroup = async (req, res) => {
     try {
@@ -29,6 +30,9 @@ exports.getGroup = async (req, res) => {
         
         const find = await group.findAll({            
             where: { statusDelete: false },
+            include:{
+                model: element,
+            },
         });
         
         return res.status(200).send(find);

@@ -1,7 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
     const Period = sequelize.define('period', {
         numPeriod: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
         },
         statusDelete: {
             type: Sequelize.BOOLEAN,

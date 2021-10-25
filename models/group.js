@@ -1,7 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
     const Group = sequelize.define('group', {
         numGroup: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
         },
         statusDelete: {
             type: Sequelize.BOOLEAN,

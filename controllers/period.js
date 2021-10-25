@@ -2,6 +2,7 @@
 const db = require("../models/index");
 
 const period = db.period;
+const element = db.element;
 
 exports.createPeriod = async (req, res) => {
     try {
@@ -29,6 +30,9 @@ exports.getPeriod = async (req, res) => {
         
         const find = await period.findAll({            
             where: { statusDelete: false },
+            include: {
+                model: element,
+            },
         });
         
         return res.status(200).send(find);

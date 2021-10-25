@@ -91,12 +91,13 @@ exports.getElement = async (req, res) => {
     try {
         //query de asociacion con period
         const { periodName } = req.query;
+        
         if (periodName) {
             const find = await element.findAll({
                 where: { statusDelete: false },
                 include: {
                     model: period,
-                    where: {state:{[Op.iRegexp]: periodName}},
+                    where: {numPeriod:{[Op.iRegexp]:periodName}},
                 },
             });
             return res.status(200).send(find);
@@ -109,7 +110,7 @@ exports.getElement = async (req, res) => {
                 where: { statusDelete: false },
                 include: {
                     model: group,
-                    where: {state: { [Op.iRegexp]: groupName}},
+                    where: {numGroup: { [Op.iRegexp]: groupName}},
                 },
             });
             return res.status(200).send(find);
@@ -122,11 +123,12 @@ exports.getElement = async (req, res) => {
                 where: { statusDelete: false },
                 include: {
                     model: clasification,
-                    where: {state:{[Op.iRegexp]: clasificationName}},
+                    where: {nameClasification:{[Op.iRegexp]: clasificationName}},
                 },
             });
 
             return res.status(200).send(find);
+            
         }
 
         //query de asociacion con user
@@ -136,7 +138,7 @@ exports.getElement = async (req, res) => {
                 where: { statusDelete: false },
                 include: {
                     model: user,
-                    where: {state: {[Op.iRegexp]: userName}},
+                    where: {name: {[Op.iRegexp]: userName}},
                 },
             });
 
@@ -151,7 +153,8 @@ exports.getElement = async (req, res) => {
         return res.status(200).send(find);
 
     } catch (error) {
-        return res.status(500).send(message.error);
+        console.error(error);
+        return res.status(500).send(error);        
     }
 };
 
@@ -176,7 +179,7 @@ exports.updateElement = async (req, res) => {
         if (!body.clasification)
             return res.status(404).send({ message: "clasification is required" });
         if (!body.user)
-            return res.status(404).send({ message: "clasification is required" }); 
+            return res.status(404).send({ message: "user is required" }); 
         
         const validate = await element.findOne({
             where:{ id: params.id },
