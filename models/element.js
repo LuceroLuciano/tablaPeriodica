@@ -13,6 +13,9 @@ module.exports = (sequelize, Sequelize) => {
         atomicMass: {
             type: Sequelize.DECIMAL,
         },
+        logo:{
+            type: Sequelize.STRING,
+        },
         statusDelete: {
             type: Sequelize.BOOLEAN,
             defaultValue: false,

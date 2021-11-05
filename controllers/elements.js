@@ -5,6 +5,8 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 /* const { param } = require("../routes/routes"); */
 
+const uploadImages = require('../utils/uploadimages');
+
 const element = db.element;
 const period = db.period;
 const group = db.group; 
@@ -67,6 +69,9 @@ exports.createElement = async (req, res) => {
         if (!findUser)
             return res.status(404).send({ message:'Usuario no se encontro' });
 
+        //logo
+        let logo = await uploadImages.fileUpload(body.logo,'/logos');
+        
         //creacion elemento
         const create = await element.create({
             name: body.name,
@@ -76,8 +81,8 @@ exports.createElement = async (req, res) => {
             periodId: body.periodId, 
             groupId: body.groupId,
             clasificationId: body.clasificationId,
-            userId: body.userId,           
-
+            userId: body.userId,  
+            logo: logo,    
         });
         
         return res.status(201).send({ message: 'Elemento creado correctamente' });

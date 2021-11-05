@@ -1,6 +1,7 @@
 // hacer peticiones a un servidor
 const express = require('express');
 const morgan = require('morgan');
+const fileUpload = require("express-fileupload");
 const enrutador = require('./routes/routes');
 const db = require('./models/index.js');
 
@@ -26,12 +27,17 @@ app.use(morgan('dev'));
 // servido no se cuelgue
 app.use(express.json({limit:'50mb'}));
 
-// routes
 // metodos http -post -get -put -delete
 
 app.use('/api/tablaPeriodica',enrutador);
 
 //static files
+app.use(fileUpload());
+
+// routes
+app.use("/api", enrutador);
+app.use('/public',express.static(__dirname + '/public'));
+
 
 //staart server
 app.listen(8080, ()=>{
