@@ -1,5 +1,10 @@
 const db = require('../models/index')
 
+//importacion de la libreria bcryptjs
+const bcrypt = require('bcryptjs')
+
+
+
 const user = db.user; 
 const element = db.element;
 
@@ -19,12 +24,16 @@ exports.createUser = async (req, res) => {
             return res.status(404).send({ message:'password is requires' });
         if(!body.role)
             return res.status(404).send({ message:'role is requires' });
-            
+          
+        //encriptacion de contraseña
+    let encriptedPassword = bcrypt.hashSync(body.password, 10);
+    console.log('EL HASH A GUARDAR ES: \n', encriptedPassword );
+
         const create = await user.create({
             name: body.name,
             lastname: body.lastname,
             email: body.email,
-            password: body.password,
+            password: encriptedPassword,
             role: body.role,            
         });
         return res.status(201).send({ message:'usuario creado correctamente' });
